@@ -1,4 +1,5 @@
 package com.bank.bankingayman.entities;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class Customer {
     private String email;
 
     @OneToMany(mappedBy = "customer" )
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<BankAccount> bankAccounts;
 
     public Customer() {

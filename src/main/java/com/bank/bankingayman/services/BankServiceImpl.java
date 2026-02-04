@@ -133,4 +133,9 @@ public class BankServiceImpl implements BankAccountService{
         debit(accountIdSource , amount , "debit" );
         credit(accountIdDestination , amount , "credit" );
     }
+
+    @Override
+    public List<BankAccount> BankAccountList() {
+        return bankAccountRepository.findAll();
+    }
 }

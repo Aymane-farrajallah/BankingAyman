@@ -1,0 +1,18 @@
+package com.bank.bankingayman.mappers;
+
+import com.bank.bankingayman.dtos.CustomerDTO;
+import com.bank.bankingayman.entities.Customer;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BankAccountMapperImpl {
+    public CustomerDTO fromCustomer(Customer customer){
+        CustomerDTO customerDTO = new CustomerDTO();
+            BeanUtils.copyProperties(customer,customerDTO);
+        return customerDTO;
+    };
+    public Customer fromCustomerDTO(CustomerDTO customerDTO){
+        return null;
+    };
+}
