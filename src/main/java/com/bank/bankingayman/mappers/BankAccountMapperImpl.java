@@ -13,6 +13,8 @@ public class BankAccountMapperImpl {
         return customerDTO;
     };
     public Customer fromCustomerDTO(CustomerDTO customerDTO){
-        return null;
+        Customer customer =  new Customer();
+            BeanUtils.copyProperties(customerDTO,customer);
+        return customer;
     };
 }

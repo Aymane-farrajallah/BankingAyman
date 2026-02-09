@@ -1,5 +1,6 @@
 package com.bank.bankingayman;
 
+import com.bank.bankingayman.dtos.CustomerDTO;
 import com.bank.bankingayman.entities.*;
 import com.bank.bankingayman.enums.AccountStatus;
 import com.bank.bankingayman.enums.OperationType;
@@ -31,7 +32,7 @@ public class BankingAymanApplication {
     CommandLineRunner commandLineRunner(BankAccountService bankAccountService){
         return args ->  {
             Stream.of("Hassan", "Imane","Mohamed").forEach(name -> {
-                Customer customer = new Customer();
+                CustomerDTO customer = new CustomerDTO();
                 customer.setName(name);
                 customer.setEmail(name + "@gmail.com");
                 bankAccountService.saveCustomer(customer);

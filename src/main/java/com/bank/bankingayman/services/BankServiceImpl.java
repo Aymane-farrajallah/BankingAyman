@@ -1,21 +1,27 @@
 package com.bank.bankingayman.services;
+import com.bank.bankingayman.dtos.CustomerDTO;
 import com.bank.bankingayman.entities.*;
 import com.bank.bankingayman.enums.OperationType;
 import com.bank.bankingayman.exceptions.BalanceNotSufficientException;
 import com.bank.bankingayman.exceptions.BankAccountNotFoundException;
 import com.bank.bankingayman.exceptions.CustomerNotFoundException;
+import com.bank.bankingayman.mappers.BankAccountMapperImpl;
 import com.bank.bankingayman.repositories.AccountOperationRepository;
 import com.bank.bankingayman.repositories.BankAccountRepository;
 import com.bank.bankingayman.repositories.CustomerRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+
+@AllArgsConstructor
+@Slf4j
 @Service
 @Transactional
 public class BankServiceImpl implements BankAccountService{
@@ -23,20 +29,28 @@ public class BankServiceImpl implements BankAccountService{
     private CustomerRepository customerRepository;
     private BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
+    private BankAccountMapperImpl dtoMapper;
 
-    Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-    public BankServiceImpl(CustomerRepository customerRepository, BankAccountRepository bankAccountRepository, AccountOperationRepository accountOperationRepository) {
-        this.customerRepository = customerRepository;
-        this.bankAccountRepository = bankAccountRepository;
-        this.accountOperationRepository = accountOperationRepository;
+    @Override
+    public CustomerDTO saveCustomer(CustomerDTO customerDTO) {
+        log.info("Saving new Customer");
+            Customer customer = dtoMapper.fromCustomerDTO(customerDTO);
+            Customer savedCustomer = customerRepository.save(customer);
+        return dtoMapper.fromCustomer(savedCustomer);
     }
 
     @Override
-    public Customer saveCustomer(Customer customer) {
+    public CustomerDTO updateCustomer(CustomerDTO customerDTO) {
         log.info("Saving new Customer");
+        Customer customer = dtoMapper.fromCustomerDTO(customerDTO);
         Customer savedCustomer = customerRepository.save(customer);
-        return savedCustomer;
+        return dtoMapper.fromCustomer(savedCustomer);
+    }
+
+    @Override
+    public void deleteCustomer(Long customerId) {
+        customerRepository.deleteById(customerId);
     }
 
     @Override
@@ -81,9 +95,26 @@ public class BankServiceImpl implements BankAccountService{
     }
 
     @Override
-    public List<Customer> listCustomers() {
-        return customerRepository.findAll();
-    }
+    public List<CustomerDTO> listCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerDTO> customerDTOS = customers.stream()
+                .map(customer -> dtoMapper.fromCustomer(customer))
+                .collect(Collectors.toList());
+
+//        List<CustomerDTO> customerDTOS = new ArrayList<>();
+//        for(Customer customer : customers){
+//            CustomerDTO customerDTO=dtoMapper.fromCustomer(customer);
+//            customerDTOS.add(customerDTO);
+//        }
+            return customerDTOS;
+    };
+
+    @Override
+    public CustomerDTO getCustomer(Long customerid) throws CustomerNotFoundException{
+        Customer customer = customerRepository.findById(customerid)
+                .orElseThrow(()-> new CustomerNotFoundException("Customer Not Found"));
+        return dtoMapper.fromCustomer(customer);
+    };
 
     @Override
     public BankAccount getBankAccount(String accountId) throws BankAccountNotFoundException {
@@ -138,4 +169,6 @@ public class BankServiceImpl implements BankAccountService{
     public List<BankAccount> BankAccountList() {
         return bankAccountRepository.findAll();
     }
+
+
 }

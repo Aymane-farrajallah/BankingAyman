@@ -1,5 +1,6 @@
 package com.bank.bankingayman.services;
 
+import com.bank.bankingayman.dtos.CustomerDTO;
 import com.bank.bankingayman.entities.BankAccount;
 import com.bank.bankingayman.entities.CurrentAccount;
 import com.bank.bankingayman.entities.Customer;
@@ -12,10 +13,18 @@ import java.util.List;
 
 public interface BankAccountService {
 
-    Customer saveCustomer(Customer customer);
+    CustomerDTO saveCustomer(CustomerDTO customerDTO);
+
+    CustomerDTO updateCustomer(CustomerDTO customerDTO);
+
+    void deleteCustomer(Long customerId);
+
     CurrentAccount saveCurrentBankAccount(double initialBalance , Long CustomerId , double overDraft) throws CustomerNotFoundException;
     SavingAccount saveSavingBankAccount(double initialBalance , Long CustomerId , double interestRate) throws CustomerNotFoundException;
-    List<Customer> listCustomers();
+    List<CustomerDTO> listCustomers();
+
+    CustomerDTO getCustomer(Long customerid) throws CustomerNotFoundException;
+
     BankAccount getBankAccount(String accountId) throws BankAccountNotFoundException;
     void debit(String accountId, double amount , String description) throws BankAccountNotFoundException, BalanceNotSufficientException;
     void credit(String accountId, double amount , String description) throws BankAccountNotFoundException;
